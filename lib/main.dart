@@ -33,63 +33,6 @@ class _MyAppState extends State<MyApp> {
             SizedBox(width: 30)
           ],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home, color: Colors.black), label: "Home"),
-            BottomNavigationBarItem(icon: Icon(Icons.home, color: Colors.black), label: "Your Order"),
-            BottomNavigationBarItem(icon: Icon(Icons.home, color: Colors.black), label: "User")
-          ]),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            addPost(postCollection);
-          },
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-          backgroundColor: Colors.black,
-          child: Icon(Icons.shopping_bag, color: Colors.white)
-        ),
-      ),
-    );
-  }
-}
-
-Future<void> addPost(postCollection) async {
-  await postCollection.add({
-      'title': 'New Golf Post',
-      'description': 'This is a test post for golf club',
-      'timestamp': FieldValue.serverTimestamp(),
-  });
-}
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "Welcome to Golf Club",
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-          ),
-          actions: [
-            Icon(Icons.search, color: Colors.black),
-            SizedBox(width: 20),
-          ],
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: [
-            BottomNavigationBarItem(
-                icon: Icon(Icons.home, color: Colors.black), label: "Home"),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.shopping_cart, color: Colors.black),
-                label: "Your Order"),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.person, color: Colors.black), label: "User"),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
-          backgroundColor: Colors.black,
-          child: Icon(Icons.shopping_bag, color: Colors.white),
-        ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
           child: Column(
@@ -233,7 +176,30 @@ Future<void> addPost(postCollection) async {
             ],
           ),
         ),
+        bottomNavigationBar: BottomNavigationBar(
+          items: [
+            BottomNavigationBarItem(icon: Icon(Icons.home, color: Colors.black), label: "Home"),
+            BottomNavigationBarItem(icon: Icon(Icons.home, color: Colors.black), label: "Your Order"),
+            BottomNavigationBarItem(icon: Icon(Icons.home, color: Colors.black), label: "User")
+          ]),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            addPost(postCollection);
+          },
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+          backgroundColor: Colors.black,
+          child: Icon(Icons.shopping_bag, color: Colors.white)
+        ),
       ),
     );
   }
 }
+
+Future<void> addPost(postCollection) async {
+  await postCollection.add({
+      'title': 'New Golf Post',
+      'description': 'This is a test post for golf club',
+      'timestamp': FieldValue.serverTimestamp(),
+  });
+  }
+
