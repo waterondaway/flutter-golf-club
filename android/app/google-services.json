@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "126046489971",
+    "project_id": "flutter-golf-club-b684e",
+    "storage_bucket": "flutter-golf-club-b684e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:126046489971:android:4c35bf6b77c824b14f0906",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application_1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7y9hwC4Kael97j-8EU4vEpV_iFRV6luw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
