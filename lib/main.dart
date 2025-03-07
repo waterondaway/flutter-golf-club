@@ -178,7 +178,7 @@ class _HomeState extends State<Home> {
               Expanded(
                 child: Wrap(
                   spacing: 10.0,
-                  children: ["All", "Juniors", "Ladies", "Mens"].map((filter) {
+                  children: ["All", "Juniors", "Ladies", "mens"].map((filter) {
                     return FilterChip(
                       backgroundColor: Colors.white,
                       checkmarkColor: Colors.white,
