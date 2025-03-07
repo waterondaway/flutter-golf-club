@@ -21,12 +21,13 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   CollectionReference getProducts =
       FirebaseFirestore.instance.collection('products');
-  List<String> filters = []; // ✅ เพิ่มตัวแปร filters
+  List<String> filters = []; 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           // leading: Icon(Icons.arrow_back_ios_new, color: Colors.black),
           title: Text("Welcome to Golf Club",
@@ -86,7 +87,7 @@ class _MyAppState extends State<MyApp> {
                   Expanded(
                     child: Wrap(
                       spacing: 10.0,
-                      children: ["All", "Man", "Woman"].map((filter) {
+                      children: ["juniors", "ladies", "mens"].map((filter) {
                         return FilterChip(
                           label: Text(filter),
                           selected: filters.contains(filter),
@@ -150,12 +151,16 @@ class _MyAppState extends State<MyApp> {
                         var product = products[index];
                         return GestureDetector(
                           onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => Brand()));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Brand(brands: product['brands'], filters: filters,)));
                           },
                           child: Container(
-                            width: 130,   
+                            width: 130,
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
                               child: Image.network(product['image_logo']),
                             ),
                           ),
@@ -190,6 +195,14 @@ class _MyAppState extends State<MyApp> {
                   ),
                 ),
               ),
+              // GridView.builder(
+              //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              //         crossAxisCount: 2),
+              //     itemBuilder: (context, index) {
+              //       return Card(
+              //         child: ,
+              //       )
+              //     })
             ],
           ),
         ),
