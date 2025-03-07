@@ -37,6 +37,12 @@ dependencies:
   cupertino_icons: ^1.0.8
   firebase_core: ^3.12.1
   cloud_firestore: ^5.6.5
+<<<<<<< Updated upstream
+=======
+  flutter_image_slideshow: ^0.1.6
+  firebase_auth: ^5.5.1
+  google_sign_in: ^6.2.2
+>>>>>>> Stashed changes
 
 dev_dependencies:
   flutter_test:

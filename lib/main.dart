@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+<<<<<<< Updated upstream
+
+=======
+// import 'firebase_options.dart';
+import 'package:flutter_application_1/brand.dart';
+import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
+>>>>>>> Stashed changes
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
   runApp(const MyApp());
 }
 
