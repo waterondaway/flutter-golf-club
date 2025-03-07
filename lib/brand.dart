@@ -62,7 +62,7 @@ class _BrandState extends State<Brand> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) => Productpage(
-                                      productId: product.id)));
+                                      productId: product.id, brands: widget.brands, category: category)));
                         },
                         child: Card(
                           color: Colors.white,
