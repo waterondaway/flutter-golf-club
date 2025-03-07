@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_application_1/brand.dart';
+import 'package:flutter_application_1/cartshopscreen.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'firebase_options.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -93,14 +95,22 @@ class _MyAppState extends State<MyApp> {
           selectedItemColor: Colors.black,
           unselectedItemColor: Colors.black87,
         ),
-        floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              // addPost(postCollection);
-            },
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(100)),
-            backgroundColor: Colors.black,
-            child: Icon(Icons.shopping_bag, color: Colors.white)),
+        floatingActionButton: Builder(
+          builder: (context) {
+            return FloatingActionButton(
+              onPressed: () {
+                 Navigator.push(
+                  context, 
+                  MaterialPageRoute(
+                    builder: (context) => Cartshopscreen()),
+                    );
+              },
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+              backgroundColor: Colors.black,
+              child: Icon(Icons.shopping_bag, color: Colors.white)
+            );
+          }
+        ),
       ),
     );
   }
@@ -291,13 +301,44 @@ class _HomeState extends State<Home> {
                                       filters: filters,
                                     )));
                       },
-                      child: Container(
-                        width: 130,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Image.network(product['image_logo']),
+                      child: Stack(children: [
+                        Container(
+                          width: 130,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Image.network(product['image_logo']),
+                          ),
                         ),
-                      ),
+                        Positioned(
+                          top: 75,
+                          left: 40,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(1), // สีเงา
+                                  blurRadius: 5, // ระยะเบลอของเงา
+                                  offset: Offset(2, 2), // ระยะห่างของเงา (x, y)
+                                ),
+                              ],
+                            ),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Text(
+                                product['name'],
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ]),
                     );
                   },
                 );
