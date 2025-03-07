@@ -331,7 +331,56 @@ class _OrderState extends State<Order> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: Column(
-        children: [],
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+
+          Container(
+            height: 170,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3), // สีของเงา
+                  spreadRadius: 1, // ระยะการกระจายของเงา
+                  blurRadius: 3, // ความเบลอของเงา
+                  offset: const Offset(0, 0), // ตำแหน่งเงา
+                ),
+              ]
+            ),
+            
+          ),
+
+          SizedBox(height: 20),
+
+          Container(
+            height: 170,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3), // สีของเงา
+                  spreadRadius: 1, // ระยะการกระจายของเงา
+                  blurRadius: 3, // ความเบลอของเงา
+                  offset: const Offset(0, 0), // ตำแหน่งเงา
+                ),
+              ]
+            ),
+            
+          ),
+
+
+          
+          // ClipRRect(
+          //       borderRadius:
+          //           BorderRadius.circular(10), // กำหนดขนาดของโค้งมุมที่ต้องการ
+          //       child: Image.network(
+          //         'https://plus.unsplash.com/premium_photo-1679710943658-1565004c00ac?q=80&w=3544&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          //         fit: BoxFit.cover,
+          //       ),
+          //     ),
+        ],
       )
     );
   }
