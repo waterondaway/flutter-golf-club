@@ -20,7 +20,7 @@ class _BrandState extends State<Brand> {
       backgroundColor: const Color.fromARGB(255, 244, 244, 244),
       appBar: AppBar(
         backgroundColor: Colors.white,
-        title: Text('${widget.brands} : ${category}'),
+        title: Text('${widget.brands} : ${category}', style: TextStyle(fontWeight: FontWeight.bold),),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -106,9 +106,9 @@ class _BrandState extends State<Brand> {
                                 child: Text(
                                   '${product['price']}',
                                   style: TextStyle(
-                                      fontSize: 15,
+                                      fontSize: 16,
                                       fontWeight: FontWeight.bold,
-                                      color: Color(0xFFF77D5C)),
+                                      color: Colors.black),
                                 ),
                               ),
                               Padding(

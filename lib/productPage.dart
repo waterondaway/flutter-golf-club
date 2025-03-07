@@ -94,7 +94,7 @@ class _ProductpageState extends State<Productpage> {
                       'Price: ${productData['price'] ?? 'N/A'}',
                       style: const TextStyle(
                         fontSize: 18,
-                        color: Colors.red,
+                        color: Colors.black,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

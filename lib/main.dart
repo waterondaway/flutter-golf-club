@@ -24,7 +24,11 @@ class _MyAppState extends State<MyApp> {
   int indexScreen = 0;
   final mobileScreen = [Home(), Order(), Profile()];
   List<String> header = ["Golf Club Elite", "Your Order", "Profile"];
-  List<String> subheader = ["Your Golf Journey Starts Here", "Track Your Purchases Easily", "Stay on Top of Your Game"];
+  List<String> subheader = [
+    "Your Golf Journey Starts Here",
+    "Track Your Purchases Easily",
+    "Stay on Top of Your Game"
+  ];
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -35,15 +39,19 @@ class _MyAppState extends State<MyApp> {
           title: Row(
             children: [
               Image.asset('assets/images/golf.png', width: 40, height: 40),
-              Padding(padding: EdgeInsets.only(left: 20), child: 
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(header[indexScreen], style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20)),
-                  Text(subheader[indexScreen], style: TextStyle(color: Colors.black, fontSize: 18))
-                ]
-              )
-            )
+              Padding(
+                  padding: EdgeInsets.only(left: 20),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(header[indexScreen],
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20)),
+                        Text(subheader[indexScreen],
+                            style: TextStyle(color: Colors.black, fontSize: 18))
+                      ]))
             ],
           ),
           // leading: Icon(Icons.sports_golf, color: Colors.black),
@@ -58,7 +66,8 @@ class _MyAppState extends State<MyApp> {
                     indexScreen = 2;
                   });
                 },
-                child: Icon(Icons.account_circle, color: Colors.black, size: 40),
+                child:
+                    Icon(Icons.account_circle, color: Colors.black, size: 40),
               ),
             )
           ],
@@ -291,13 +300,44 @@ class _HomeState extends State<Home> {
                                       filters: filters,
                                     )));
                       },
-                      child: Container(
-                        width: 130,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Image.network(product['image_logo']),
+                      child: Stack(children: [
+                        Container(
+                          width: 130,
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Image.network(product['image_logo']),
+                          ),
                         ),
-                      ),
+                        Positioned(
+                          top: 75,
+                          left: 40,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(1), // สีเงา
+                                  blurRadius: 5, // ระยะเบลอของเงา
+                                  offset: Offset(2, 2), // ระยะห่างของเงา (x, y)
+                                ),
+                              ],
+                            ),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Text(
+                                product['name'],
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ]),
                     );
                   },
                 );
@@ -329,11 +369,10 @@ class _OrderState extends State<Order> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      child: Column(
-        children: [],
-      )
-    );
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        child: Column(
+          children: [],
+        ));
   }
 }
 
@@ -348,10 +387,9 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      child: Column(
-        children: [],
-      )
-    );
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        child: Column(
+          children: [],
+        ));
   }
 }
