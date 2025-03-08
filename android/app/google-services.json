@@ -48,6 +48,42 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:126046489971:android:db50708b3c15084c4f0906",
+        "android_client_info": {
+          "package_name": "com.example.flutter_auth"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "126046489971-p62dfng074nk3bsheannjf86pnn007r6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB7y9hwC4Kael97j-8EU4vEpV_iFRV6luw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "126046489971-p62dfng074nk3bsheannjf86pnn007r6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "126046489971-e20htdoppeidtfm4jht5et7qk4r1di1v.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.flutterApplication1"
+              }
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

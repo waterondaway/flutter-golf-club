@@ -43,7 +43,9 @@ class _CartshopscreenState extends State<Cartshopscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -52,7 +54,7 @@ class _CartshopscreenState extends State<Cartshopscreen> {
         ),
         title: Text(
           "Shopping cart",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         bottom: PreferredSize(

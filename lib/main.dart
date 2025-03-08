@@ -5,14 +5,19 @@ import 'package:flutter_application_1/brand.dart';
 import 'package:flutter_application_1/cartshopscreen.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'firebase_options.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(const MyApp());
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: MyApp(),
+    )
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -29,9 +34,7 @@ class _MyAppState extends State<MyApp> {
   List<String> subheader = ["Your Golf Journey Starts Here", "Track Your Purchases Easily", "Stay on Top of Your Game"];
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           title: Row(
@@ -48,19 +51,22 @@ class _MyAppState extends State<MyApp> {
             )
             ],
           ),
-          // leading: Icon(Icons.sports_golf, color: Colors.black),
-          // title: Text(header[indexScreen],style:
-          //         TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
           actions: [
-            Padding(
+          Padding(
               padding: EdgeInsets.only(right: 20),
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    indexScreen = 2;
-                  });
-                },
-                child: Icon(Icons.account_circle, color: Colors.black, size: 40),
+              child: Builder(
+                builder: (context) => GestureDetector(
+                  onTap: () { 
+                    setState(() {
+                      indexScreen = 2;
+                    });
+                    // Navigator.push(
+                    //   context, 
+                    //   MaterialPageRoute(builder: (context) => authPage()),
+                    // );
+                  },
+                  child: Icon(Icons.account_circle, color: Colors.black, size: 40),
+                ),
               ),
             )
           ],
@@ -99,6 +105,7 @@ class _MyAppState extends State<MyApp> {
           builder: (context) {
             return FloatingActionButton(
               onPressed: () {
+
                  Navigator.push(
                   context, 
                   MaterialPageRoute(
@@ -111,17 +118,8 @@ class _MyAppState extends State<MyApp> {
             );
           }
         ),
-      ),
-    );
+      );
   }
-}
-
-Future<void> addPost(postCollection) async {
-  await postCollection.add({
-    'title': 'New Golf Post',
-    'description': 'This is a test post for golf club',
-    'timestamp': FieldValue.serverTimestamp(),
-  });
 }
 
 class Home extends StatefulWidget {
@@ -136,7 +134,7 @@ class _HomeState extends State<Home> {
       FirebaseFirestore.instance.collection('products');
   CollectionReference getCategories =
       FirebaseFirestore.instance.collection('categories');
-  List<String> filters = [];
+  List<String> filters = ["All"];
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -188,7 +186,7 @@ class _HomeState extends State<Home> {
               Expanded(
                 child: Wrap(
                   spacing: 10.0,
-                  children: ["All", "Juniors", "Ladies", "mens"].map((filter) {
+                  children: ["All", "Juniors", "Ladies", "Mens"].map((filter) {
                     return FilterChip(
                       backgroundColor: Colors.white,
                       checkmarkColor: Colors.white,
@@ -254,7 +252,7 @@ class _HomeState extends State<Home> {
                             MaterialPageRoute(
                                 builder: (context) => Brand(
                                       brands: product['brands'],
-                                      filters: filters,
+                                      filters: filters
                                     )));
                       },
                       child: Container(
@@ -285,59 +283,60 @@ class _HomeState extends State<Home> {
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                   return Center(child: Text('ไม่มีข้อมูล'));
                 }
-                var products = snapshot.data!.docs;
+                var categories = snapshot.data!.docs;
                 return ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: products.length,
+                  itemCount: categories.length,
                   itemBuilder: (context, index) {
-                    var product = products[index];
+                    var type = categories[index];
                     return GestureDetector(
                       onTap: () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => Brand(
-                                      brands: product['brands'],
+                                      brands: type['brands'],
                                       filters: filters,
                                     )));
                       },
-                      child: Stack(children: [
-                        Container(
-                          width: 130,
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Image.network(product['image_logo']),
-                          ),
-                        ),
-                        Positioned(
-                          top: 75,
-                          left: 40,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(1), // สีเงา
-                                  blurRadius: 5, // ระยะเบลอของเงา
-                                  offset: Offset(2, 2), // ระยะห่างของเงา (x, y)
-                                ),
-                              ],
-                            ),
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: 130,
                             child: Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text(
-                                product['name'],
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white
+                              child: Image.network(type['image_logo']),
+                            ),
+                          ),
+                          Positioned(
+                            top: 75,
+                            left: 30,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(1), // สีเงา
+                                    blurRadius: 0, // ระยะเบลอของเงา
+                                    offset: Offset(0, 0), // ระยะห่างของเงา (x, y)
+                                  ),
+                                ],
+                              ),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Text(
+                                  type['name'],
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
                       ]),
                     );
                   },
@@ -345,14 +344,6 @@ class _HomeState extends State<Home> {
               },
             ),
           ),
-          // GridView.builder(
-          //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          //         crossAxisCount: 2),
-          //     itemBuilder: (context, index) {
-          //       return Card(
-          //         child: ,
-          //       )
-          //     })
         ],
       ),
     );
@@ -439,8 +430,8 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      child: Column(
-        children: [],
+      child: Center(
+        
       )
     );
   }

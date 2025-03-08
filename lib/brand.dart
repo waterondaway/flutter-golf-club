@@ -14,13 +14,29 @@ class Brand extends StatefulWidget {
 class _BrandState extends State<Brand> {
   @override
   Widget build(BuildContext context) {
-    String category = widget.filters.isNotEmpty ? widget.filters[0] : "";
+    String category = widget.filters.isNotEmpty ? widget.filters[0].toLowerCase() : "";
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 244, 244, 244),
+      
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      // appBar: AppBar(
+      //   backgroundColor: Colors.white,
+      //   title: Text('${widget.brands} : ${category}'),
+      // ),
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: Text('${widget.brands} : ${category}'),
+          backgroundColor: Colors.white,
+          title: Row(
+            children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("${widget.brands}", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20)),
+                    Text("Categories: ${widget.filters[0]}", style: TextStyle(color: Colors.black, fontSize: 18))
+                  ],
+                )
+                
+            ]
+          ),
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
