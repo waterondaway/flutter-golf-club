@@ -3,9 +3,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_application_1/brand.dart';
 import 'package:flutter_application_1/cartshopscreen.dart';
+import 'package:flutter_application_1/typePage.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'firebase_options.dart';
-
+import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +27,11 @@ class _MyAppState extends State<MyApp> {
   int indexScreen = 0;
   final mobileScreen = [Home(), Order(), Profile()];
   List<String> header = ["Golf Club Elite", "Your Order", "Profile"];
-  List<String> subheader = ["Your Golf Journey Starts Here", "Track Your Purchases Easily", "Stay on Top of Your Game"];
+  List<String> subheader = [
+    "Your Golf Journey Starts Here",
+    "Track Your Purchases Easily",
+    "Stay on Top of Your Game"
+  ];
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -37,15 +42,19 @@ class _MyAppState extends State<MyApp> {
           title: Row(
             children: [
               Image.asset('assets/images/golf.png', width: 40, height: 40),
-              Padding(padding: EdgeInsets.only(left: 20), child: 
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(header[indexScreen], style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20)),
-                  Text(subheader[indexScreen], style: TextStyle(color: Colors.black, fontSize: 18))
-                ]
-              )
-            )
+              Padding(
+                  padding: EdgeInsets.only(left: 20),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(header[indexScreen],
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20)),
+                        Text(subheader[indexScreen],
+                            style: TextStyle(color: Colors.black, fontSize: 18))
+                      ]))
             ],
           ),
           // leading: Icon(Icons.sports_golf, color: Colors.black),
@@ -60,7 +69,8 @@ class _MyAppState extends State<MyApp> {
                     indexScreen = 2;
                   });
                 },
-                child: Icon(Icons.account_circle, color: Colors.black, size: 40),
+                child:
+                    Icon(Icons.account_circle, color: Colors.black, size: 40),
               ),
             )
           ],
@@ -95,22 +105,19 @@ class _MyAppState extends State<MyApp> {
           selectedItemColor: Colors.black,
           unselectedItemColor: Colors.black87,
         ),
-        floatingActionButton: Builder(
-          builder: (context) {
-            return FloatingActionButton(
+        floatingActionButton: Builder(builder: (context) {
+          return FloatingActionButton(
               onPressed: () {
-                 Navigator.push(
-                  context, 
-                  MaterialPageRoute(
-                    builder: (context) => Cartshopscreen()),
-                    );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Cartshopscreen()),
+                );
               },
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100)),
               backgroundColor: Colors.black,
-              child: Icon(Icons.shopping_bag, color: Colors.white)
-            );
-          }
-        ),
+              child: Icon(Icons.shopping_bag, color: Colors.white));
+        }),
       ),
     );
   }
@@ -296,9 +303,9 @@ class _HomeState extends State<Home> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Brand(
-                                      brands: product['brands'],
-                                      filters: filters,
+                                builder: (context) => Typepage(
+                                      type: product['name'],
+                                      filter: filters[0],
                                     )));
                       },
                       child: Stack(children: [
@@ -330,10 +337,9 @@ class _HomeState extends State<Home> {
                               child: Text(
                                 product['name'],
                                 style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white
-                                ),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
                               ),
                             ),
                           ),
@@ -370,78 +376,199 @@ class _OrderState extends State<Order> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-
-          Container(
-            height: 170,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3), // สีของเงา
-                  spreadRadius: 1, // ระยะการกระจายของเงา
-                  blurRadius: 3, // ความเบลอของเงา
-                  offset: const Offset(0, 0), // ตำแหน่งเงา
-                ),
-              ]
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Container(
+              height: 170,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3), // สีของเงา
+                      spreadRadius: 1, // ระยะการกระจายของเงา
+                      blurRadius: 3, // ความเบลอของเงา
+                      offset: const Offset(0, 0), // ตำแหน่งเงา
+                    ),
+                  ]),
             ),
-            
-          ),
 
-          SizedBox(height: 20),
+            SizedBox(height: 20),
 
-          Container(
-            height: 170,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3), // สีของเงา
-                  spreadRadius: 1, // ระยะการกระจายของเงา
-                  blurRadius: 3, // ความเบลอของเงา
-                  offset: const Offset(0, 0), // ตำแหน่งเงา
-                ),
-              ]
+            Container(
+              height: 170,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.3), // สีของเงา
+                      spreadRadius: 1, // ระยะการกระจายของเงา
+                      blurRadius: 3, // ความเบลอของเงา
+                      offset: const Offset(0, 0), // ตำแหน่งเงา
+                    ),
+                  ]),
             ),
-            
-          ),
 
-
-          
-          // ClipRRect(
-          //       borderRadius:
-          //           BorderRadius.circular(10), // กำหนดขนาดของโค้งมุมที่ต้องการ
-          //       child: Image.network(
-          //         'https://plus.unsplash.com/premium_photo-1679710943658-1565004c00ac?q=80&w=3544&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-          //         fit: BoxFit.cover,
-          //       ),
-          //     ),
-        ],
-      )
-    );
+            // ClipRRect(
+            //       borderRadius:
+            //           BorderRadius.circular(10), // กำหนดขนาดของโค้งมุมที่ต้องการ
+            //       child: Image.network(
+            //         'https://plus.unsplash.com/premium_photo-1679710943658-1565004c00ac?q=80&w=3544&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            //         fit: BoxFit.cover,
+            //       ),
+            //     ),
+          ],
+        ));
   }
 }
 
 class Profile extends StatefulWidget {
-  const Profile({super.key});
-
   @override
-  State<Profile> createState() => _ProfileState();
+  _ProfileState createState() => _ProfileState();
 }
 
 class _ProfileState extends State<Profile> {
+  DocumentReference userRef = FirebaseFirestore.instance
+      .collection('users')
+      .doc('mYu70LVUSACs3Ec0JeQa');
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      child: Column(
-        children: [],
-      )
+      child: StreamBuilder<DocumentSnapshot>(
+        stream: userRef.snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (!snapshot.hasData || !snapshot.data!.exists) {
+            return const Center(child: Text('User not found'));
+          }
+
+          var user = snapshot.data!.data() as Map<String, dynamic>;
+
+          return ListView(
+            children: [
+              // Text('Profile', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+              ListTile(
+                title: Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Name: ',
+                        style: const TextStyle(
+                            fontWeight:
+                                FontWeight.bold), // ทำให้ "Name: " เป็นตัวหนา
+                      ),
+                      TextSpan(
+                        text: user['userName'] ??
+                            'No Name', // ข้อมูลที่มาจาก Firebase
+                      ),
+                    ],
+                  ),
+                ),
+                trailing: IconButton(
+                  icon: const Icon(
+                    Icons.edit_rounded,
+                    size: 17,
+                    color: Colors.black,
+                  ),
+                  onPressed: () =>
+                      _showEditDialog(context, 'userName', user['userName']),
+                ),
+              ),
+              ListTile(
+                title: Text.rich(TextSpan(children: [
+                  TextSpan(
+                    text: 'Phone: ',
+                    style: const TextStyle(
+                        fontWeight:
+                            FontWeight.bold), // ทำให้ "Name: " เป็นตัวหนา
+                  ),
+                  TextSpan(text: user['phone'] ?? 'No Name')
+                ])),
+                trailing: IconButton(
+                  icon: const Icon(
+                    Icons.edit,
+                    size: 17,
+                    color: Colors.black,
+                  ),
+                  onPressed: () =>
+                      _showEditDialog(context, 'phone', user['phone']),
+                ),
+              ),
+              ListTile(
+                title: Text.rich(TextSpan(children: [
+                  TextSpan(
+                    text: 'Address: ',
+                    style: const TextStyle(
+                        fontWeight:
+                            FontWeight.bold), // ทำให้ "Name: " เป็นตัวหนา
+                  ),
+                  TextSpan(text: user['address'] ?? 'No address')
+                ])),
+                trailing: IconButton(
+                  icon: const Icon(
+                    Icons.edit,
+                    size: 17,
+                    color: Colors.black,
+                  ),
+                  onPressed: () =>
+                      _showEditDialog(context, 'address', user['address']),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  void _showEditDialog(
+      BuildContext context, String field, String? currentValue) {
+    TextEditingController controller =
+        TextEditingController(text: currentValue);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.white,
+          title: Text('Edit $field'),
+          content: TextField(
+            controller: controller,
+            decoration: InputDecoration(
+              labelText: 'Enter new $field',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
+              onPressed: () async {
+                await userRef.update({field: controller.text});
+                Navigator.of(context).pop(); // ปิด Modal
+              },
+              child: const Text(
+                'Save',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
