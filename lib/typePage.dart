@@ -1,88 +1,165 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_application_1/productPage.dart';
 
 class Typepage extends StatefulWidget {
-  const Typepage({super.key, required this.type, required this.filter});
   final String type;
-  final String filter;
+  const Typepage({super.key, required this.type});
 
   @override
-  State<Typepage> createState() => _TypepageState();
+  _TypepageState createState() => _TypepageState();
 }
 
 class _TypepageState extends State<Typepage> {
-  // เราจะดึงข้อมูลจาก Firestore โดยใช้ค่า `type` และ `filter`
+  String filter = 'all';
+  CollectionReference brandRef =
+      FirebaseFirestore.instance.collection('product');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 244, 244, 244),
       appBar: AppBar(
-        title: Text(widget.type), // แสดงประเภทที่เลือก
+        backgroundColor: Colors.white,
+        title: Text(
+          '${widget.type} ',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('products') // Collection หลัก
-            .snapshots(), // ดึงข้อมูลจากทุก category (document) ภายใต้ collection `products`
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return Center(child: Text('No categories found'));
-          }
-
-          // Get the list of categories from Firestore data
-          var categories = snapshot.data!.docs;
-
-          // ดึงข้อมูลของผลิตภัณฑ์ตามประเภทที่เลือก
-          return GridView.builder(
-            padding: const EdgeInsets.all(8.0),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, // จำนวนคอลัมน์
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: 5,
             ),
-            itemCount: categories.length,
-            itemBuilder: (context, index) {
-              var category = categories[index].id; // Get category name
+            Row(
+              children: [
+                ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        filter = 'all';
+                        print(filter);
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(10),
+                                bottomLeft: Radius.circular(10))),
+                        backgroundColor:
+                            filter == 'all' ? Colors.black : Colors.white),
+                    child: Text(
+                      'All',
+                      style: TextStyle(
+                          color: filter == 'all' ? Colors.white : Colors.black),
+                    )),
+                ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        filter = 'mens';
+                        print(filter);
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(0),
+                                bottomLeft: Radius.circular(0))),
+                        backgroundColor:
+                            filter == 'mens' ? Colors.black : Colors.white),
+                    child: Text(
+                      'Mens',
+                      style: TextStyle(
+                          color:
+                              filter == 'mens' ? Colors.white : Colors.black),
+                    )),
+                ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        filter = 'ladies';
+                        print(filter);
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(0),
+                                bottomLeft: Radius.circular(0))),
+                        backgroundColor:
+                            filter == 'ladies' ? Colors.black : Colors.white),
+                    child: Text(
+                      'Ladies',
+                      style: TextStyle(
+                          color:
+                              filter == 'ladies' ? Colors.white : Colors.black),
+                    )),
+                ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        filter = 'junior';
+                        print(filter);
+                      });
+                    },
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(10),
+                                bottomRight: Radius.circular(10))),
+                        backgroundColor:
+                            filter == 'junior' ? Colors.black : Colors.white),
+                    child: Text(
+                      'junior',
+                      style: TextStyle(
+                          color: filter == 'junior'
+                              ? Colors.white
+                              : Colors.black),
+                    )),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            StreamBuilder(
+              stream: filter != 'all'
+                  ? brandRef
+                      .where('type', isEqualTo: widget.type.toLowerCase())
+                      .where('gender', isEqualTo: filter)
+                      .snapshots()
+                  : brandRef
+                      .where('type', isEqualTo: widget.type.toLowerCase())
+                      .snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  print("Fetching data for brand: ${widget.type}");
+                  return const Center(child: Text('No products found'));
+                }
 
-              print(category);
-              return StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance
-                    .collection('products') // Collection หลัก
-                    .doc(category) // Document ของ category
-                    .collection(widget.filter) // ใช้ filter สำหรับ sub-collection
-                    .where('type', isEqualTo: widget.type.toLowerCase()) // กรองข้อมูลตามประเภท
-                    .snapshots(), // ดึงข้อมูลแบบ real-time
-                builder: (context, mensSnapshot) {
-                  if (mensSnapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
-                  }
-
-                  var ironProducts = mensSnapshot.data!.docs;
-
-                  // สร้างการ์ดสินค้าภายใน grid
-                  return GridView.builder(
-                    itemCount: ironProducts.length,
+                var products = snapshot.data!.docs;
+                return Expanded(
+                  child: GridView.builder(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 1.0,
-                      mainAxisSpacing: 10.0,
-                      childAspectRatio: 0.70,
+                      crossAxisCount: 2, // กำหนดจำนวนคอลัมน์ในกริด
+                      crossAxisSpacing: 1.0, // ระยะห่างระหว่างคอลัมน์
+                      mainAxisSpacing: 10.0, // ระยะห่างระหว่างแถว
+                      childAspectRatio:
+                          0.62, // ปรับขนาดความกว้าง-สูงของแต่ละ item
                     ),
+                    itemCount: products.length,
                     itemBuilder: (context, index) {
-                      var product = ironProducts[index];
+                      var product = products[index];
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Productpage(
-                                productId: product.id,
-                                brands: category,
-                                category: category,
-                              ),
-                            ),
-                          );
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      Productpage(productId: product.id)));
                         },
                         child: Card(
                           color: Colors.white,
@@ -90,66 +167,107 @@ class _TypepageState extends State<Typepage> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.0),
                           ),
-                          child: SingleChildScrollView( // ทำให้สามารถเลื่อนเนื้อหาได้
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(10.0),
-                                    topRight: Radius.circular(10.0),
-                                  ),
-                                  child: Image.network(
-                                    product['image_path'],
-                                    fit: BoxFit.cover,
-                                    height: 150,
-                                    width: double.infinity,
-                                  ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(10.0),
+                                  topRight: Radius.circular(10.0),
                                 ),
-                                SizedBox(height: 10),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    product['product_name'] ?? 'No Name',
-                                    style: TextStyle(
+                                child: Image.network(
+                                  product[
+                                      'image_path'], // ปรับเป็นชื่อฟิลด์ที่ใช้เก็บ URL รูปภาพ
+                                  fit: BoxFit.cover,
+                                  height:
+                                      150, // เพิ่มความสูงเพื่อให้รูปภาพแสดงเต็ม
+                                  width: double.infinity, // ความกว้างของรูปภาพ
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  product['productName'] ?? 'No Name',
+                                  style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 12,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                  ),
+                                      fontSize: 15),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 8.0),
-                                  child: Text(
-                                    '${product['price']}',
-                                    style: TextStyle(
-                                      fontSize: 16,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Text(
+                                  '£${product['price']}',
+                                  style: TextStyle(
+                                      fontSize: 20,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.black,
+                                      color: Colors.black),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Container(
+                                          margin:
+                                              const EdgeInsets.only(left: 8.0),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: Colors.black,
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              const Icon(
+                                                Icons.star,
+                                                size: 17,
+                                                color: Color(0xFFFFC043),
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                product['star']?.toString() ?? '0',
+                                                style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 8.0, top: 3.0),
-                                  child: Icon(
-                                    Icons.star,
-                                    size: 15,
-                                    color: Color(0xFFFFC043),
-                                  ),
-                                ),
-                              ],
-                            ),
+                                    Container(
+                                      color: Colors.white,
+                                      child: Padding(
+                                        padding: EdgeInsets.only(right: 8),
+                                        child: Text('ขายแล้ว x ชิ้น', style: TextStyle(fontSize: 13.5),),
+                                      ),
+                                    )
+                                  ])
+                            ],
                           ),
                         ),
                       );
                     },
-                  );
-                },
-              );
-            },
-          );
-        },
+                  ),
+                );
+              },
+            ),
+            Text(widget.type)
+          ],
+        ),
       ),
     );
   }

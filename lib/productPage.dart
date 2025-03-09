@@ -1,32 +1,29 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/cartshopscreen.dart';
 import 'package:readmore/readmore.dart';
 
 class Productpage extends StatefulWidget {
   const Productpage({
     super.key,
     required this.productId,
-    required this.brands,
-    required this.category,
   });
 
   final String productId;
-  final String brands;
-  final String category;
 
   @override
   State<Productpage> createState() => _ProductpageState();
 }
 
 class _ProductpageState extends State<Productpage> {
+  CollectionReference productRef =
+      FirebaseFirestore.instance.collection('product');
+  CollectionReference addProduct = FirebaseFirestore.instance
+      .collection('users')
+      .doc('mYu70LVUSACs3Ec0JeQa')
+      .collection('carts');
   @override
   Widget build(BuildContext context) {
-    DocumentReference productRef = FirebaseFirestore.instance
-        .collection('products')
-        .doc(widget.brands.toLowerCase())
-        .collection(widget.category)
-        .doc(widget.productId);
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -34,8 +31,8 @@ class _ProductpageState extends State<Productpage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ส่วนข้อมูลสินค้า
-            StreamBuilder<DocumentSnapshot>(
-              stream: productRef.snapshots(),
+            StreamBuilder(
+              stream: productRef.doc(widget.productId).snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -45,16 +42,19 @@ class _ProductpageState extends State<Productpage> {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 }
 
-                if (!snapshot.hasData || !snapshot.data!.exists) {
+                if (!snapshot.hasData) {
                   return const Center(child: Text('Product not found'));
                 }
 
-                var productData = snapshot.data!.data() as Map<String, dynamic>?;
+                var productData = snapshot.data;
 
                 if (productData == null) {
                   return const Center(child: Text('No data available'));
                 }
-                SizedBox(height: 30,);
+                SizedBox(
+                  height: 30,
+                );
+                print(productData);
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -64,7 +64,8 @@ class _ProductpageState extends State<Productpage> {
                           child: Image.network(
                             productData['image_path'] ?? '',
                             errorBuilder: (context, error, stackTrace) {
-                              return const Icon(Icons.image_not_supported, size: 100);
+                              return const Icon(Icons.image_not_supported,
+                                  size: 100);
                             },
                           ),
                         ),
@@ -72,7 +73,8 @@ class _ProductpageState extends State<Productpage> {
                           top: 27,
                           left: 5,
                           child: IconButton(
-                            icon: const Icon(Icons.arrow_back, color: Colors.black),
+                            icon: const Icon(Icons.arrow_back,
+                                color: Colors.black),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
@@ -81,16 +83,19 @@ class _ProductpageState extends State<Productpage> {
                       ],
                     ),
                     const SizedBox(height: 15),
-                    const Divider(thickness: 5),
+                    // const Divider(
+                    //   thickness: 5,
+                    //   color: Colors.black,
+                    // ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 8),
                           child: Text(
-                            'Price: ${productData['price'] ?? 'N/A'}',
+                            'Price: £${productData['price'] ?? 'N/A'}',
                             style: const TextStyle(
-                              fontSize: 18,
+                              fontSize: 30,
                               color: Colors.black,
                               fontWeight: FontWeight.bold,
                             ),
@@ -101,7 +106,7 @@ class _ProductpageState extends State<Productpage> {
                           child: Text(
                             'sold: 14 piece',
                             style: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 15,
                             ),
                           ),
                         ),
@@ -110,19 +115,24 @@ class _ProductpageState extends State<Productpage> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        productData['product_name'] ?? 'No Name',
+                        productData['productName'] ?? 'No Name',
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                    const Divider(thickness: 5),
+                    const Divider(
+                      thickness: 1,
+                      color: Colors.black,
+                    ),
                     const SizedBox(height: 10),
-                    SizedBox(height: 10,),
-                    Padding(                      
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Padding(
                       padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                      child: Column(                        
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
@@ -130,18 +140,20 @@ class _ProductpageState extends State<Productpage> {
                             children: [
                               const Text(
                                 'Detail',
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                               ),
                               const Padding(
                                 padding: EdgeInsets.only(right: 0),
-                                child: Text('From, Thailand'),
+                                child: Text('From, Thailand', style: TextStyle(fontSize: 15),),
                               ),
                             ],
                           ),
                           const SizedBox(height: 15),
                           ReadMoreText(
-                            productData['description'] ?? 'No description available',
+                            productData['description'] ??
+                                'No description available',
                             trimLines: 2,
+                            style: TextStyle(fontSize: 15),
                             textAlign: TextAlign.justify,
                             trimMode: TrimMode.Line,
                             trimCollapsedText: '\nRead more',
@@ -158,7 +170,7 @@ class _ProductpageState extends State<Productpage> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 60),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -168,7 +180,8 @@ class _ProductpageState extends State<Productpage> {
                           child: ElevatedButton(
                             onPressed: () {},
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color.fromARGB(255, 111, 111, 111),
+                              backgroundColor:
+                                  const Color.fromARGB(255, 111, 111, 111),
                               textStyle: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
@@ -201,7 +214,26 @@ class _ProductpageState extends State<Productpage> {
                           width: 180,
                           height: 50,
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () async {
+                              var cartRef = addProduct.doc(widget
+                                  .productId); // ใช้ productId เป็น document ID
+                              var cartSnapshot = await cartRef.get();
+
+                              if (cartSnapshot.exists) {
+                                // ถ้าข้อมูลสินค้าพบในตะกร้าแล้ว อัพเดทจำนวนเพิ่มขึ้น 1
+                                int currentQty = cartSnapshot['qty'] ?? 0;
+                                cartRef.update({
+                                  'qty': currentQty + 1,
+                                });
+                              } else {
+                                // ถ้าข้อมูลสินค้าไม่พบในตะกร้า เพิ่มสินค้าใหม่
+                                cartRef.set({
+                                  'productId': widget.productId,
+                                  'status': true,
+                                  'qty': 1,
+                                });
+                              }
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.black,
                               textStyle: const TextStyle(
@@ -238,17 +270,17 @@ class _ProductpageState extends State<Productpage> {
                 );
               },
             ),
-            const SizedBox(height: 30),
-            const Divider(thickness: 5),
-            Padding(padding: EdgeInsets.only(left: 8.0), child: Text('Recommend Items !')),
+            const SizedBox(height: 20),
+            const Divider(thickness: 2, color: Colors.black,),
+            SizedBox(height: 20,),
+            Padding(
+                padding: EdgeInsets.only(left: 8.0),
+                child: Text('Recommend Items !', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),)),
             // ส่วนรายการสินค้าแนะนำ
             const SizedBox(height: 15),
             StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('products')
-                  .doc(widget.brands.toLowerCase())
-                  .collection(widget.category)
-                  .snapshots(),
+              stream:
+                  FirebaseFirestore.instance.collection('product').snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -258,14 +290,16 @@ class _ProductpageState extends State<Productpage> {
                 }
 
                 var products = snapshot.data!.docs;
-
+                // สุ่มข้อมูล 10 รายการ
+                products.shuffle(); // ทำการสุ่มรายการ
+                var randomProducts = products.take(10).toList();
                 return SizedBox(
                   height: 300,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: products.length,
                     itemBuilder: (context, index) {
-                      var product = products[index];
+                      var product = randomProducts[index];
                       return GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -273,8 +307,7 @@ class _ProductpageState extends State<Productpage> {
                             MaterialPageRoute(
                               builder: (context) => Productpage(
                                 productId: product.id,
-                                brands: widget.brands,
-                                category: widget.category,
+                                // brands: widget.brands,
                               ),
                             ),
                           );
@@ -283,7 +316,7 @@ class _ProductpageState extends State<Productpage> {
                           // height: 10,
                           width: 180,
                           child: Card(
-                            color: Colors.white,          
+                            color: Colors.white,
                             elevation: 5.0,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10.0),
@@ -307,7 +340,7 @@ class _ProductpageState extends State<Productpage> {
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    product['product_name'] ?? 'No Name',
+                                    product['productName'] ?? 'No Name',
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 12,
@@ -328,7 +361,8 @@ class _ProductpageState extends State<Productpage> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 8.0, top: 3.0),
+                                  padding: const EdgeInsets.only(
+                                      left: 8.0, top: 3.0),
                                   child: const Icon(
                                     Icons.star,
                                     size: 15,
@@ -348,6 +382,19 @@ class _ProductpageState extends State<Productpage> {
           ],
         ),
       ),
+      floatingActionButton: Builder(builder: (context) {
+        return FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => Cartshopscreen()),
+              );
+            },
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(100)),
+            backgroundColor: Colors.black,
+            child: Icon(Icons.shopping_bag, color: Colors.white));
+      }),
     );
   }
 }

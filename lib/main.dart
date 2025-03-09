@@ -7,6 +7,7 @@ import 'package:flutter_application_1/typePage.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'firebase_options.dart';
 import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,7 +26,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   int indexScreen = 0;
-  final mobileScreen = [Home(), Order(), Profile()];
+  final mobileScreen = [Home(), Order()];
   List<String> header = ["Golf Club Elite", "Your Order", "Profile"];
   List<String> subheader = [
     "Your Golf Journey Starts Here",
@@ -143,14 +144,12 @@ class _HomeState extends State<Home> {
       FirebaseFirestore.instance.collection('products');
   CollectionReference getCategories =
       FirebaseFirestore.instance.collection('categories');
-  List<String> filters = [];
+  // List<String> filters = [];
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           // ✅ Slideshow
           ImageSlideshow(
             autoPlayInterval: 10000,
@@ -188,180 +187,135 @@ class _HomeState extends State<Home> {
 
           SizedBox(height: 15),
 
-          // ✅ Filter & Button
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Wrap(
-                  spacing: 10.0,
-                  children: ["All", "Juniors", "Ladies", "mens"].map((filter) {
-                    return FilterChip(
-                      backgroundColor: Colors.white,
-                      checkmarkColor: Colors.white,
-                      selectedColor: Colors.black,
-                      label: Text(filter),
-                      labelStyle: TextStyle(
-                          color: filters.contains(filter)
-                              ? Colors.white
-                              : Colors.black),
-                      selected: filters.contains(filter),
-                      onSelected: (bool selected) {
-                        setState(() {
-                          if (selected) {
-                            if (filter == "All") {
-                              filters.clear();
-                              filters.add(filter);
-                            } else {
-                              filters.add(filter);
-                              filters.remove("All");
-                            }
-                          } else {
-                            filters.remove(filter);
-                          }
-                        });
+
+              // ✅ เส้นคั่น
+              Divider(thickness: 1),
+              Container(
+                child: Text('Get Insprired! Popular Golf',
+                    style:
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+              ),
+              SizedBox(height: 15),
+              // ✅ Brand List
+              SizedBox(
+                height: 100,
+                child: StreamBuilder(
+                  stream: getProducts.snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Center(child: Text('เกิดข้อผิดพลาด'));
+                    }
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return Center(child: Text('ไม่มีข้อมูล'));
+                    }
+                    var products = snapshot.data!.docs;
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: products.length,
+                      itemBuilder: (context, index) {
+                        var product = products[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => Brand(
+                                          brands: product['brands'],
+                                          // filters: filters,
+                                        )));
+                          },
+                          child: Container(
+                            width: 130,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Image.network(product['image_logo']),
+                            ),
+                          ),
+                        );
                       },
                     );
-                  }).toList(),
+                  },
+                ),
+              ),
+
+              SizedBox(height: 15),
+
+              // ✅ Club List
+              SizedBox(
+                height: 100,
+                child: StreamBuilder(
+                  stream: getCategories.snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasError) {
+                      return Center(child: Text('เกิดข้อผิดพลาด'));
+                    }
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return Center(child: Text('ไม่มีข้อมูล'));
+                    }
+                    var products = snapshot.data!.docs;
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: products.length,
+                      itemBuilder: (context, index) {
+                        var product = products[index];
+                        return GestureDetector(
+                          onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => Typepage(
+                                            type: product['name'],                  
+                                          )));
+                          },
+                          child: Stack(children: [
+                            Container(
+                              width: 130,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Image.network(product['image_logo']),
+                              ),
+                            ),
+                            Positioned(
+                              top: 75,
+                              left: 40,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color:
+                                          Colors.black.withOpacity(1), // สีเงา
+                                      blurRadius: 5, // ระยะเบลอของเงา
+                                      offset:
+                                          Offset(2, 2), // ระยะห่างของเงา (x, y)
+                                    ),
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: Text(
+                                    product['name'],
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ]),
+                        );
+                      },
+                    );
+                  },
                 ),
               ),
             ],
           ),
-          SizedBox(height: 15),
-
-          // ✅ เส้นคั่น
-          Divider(thickness: 1),
-          Container(
-            child: Text('Get Insprired! Popular Golf',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-          ),
-          SizedBox(height: 15),
-          // ✅ Brand List
-          SizedBox(
-            height: 100,
-            child: StreamBuilder(
-              stream: getProducts.snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Center(child: Text('เกิดข้อผิดพลาด'));
-                }
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text('ไม่มีข้อมูล'));
-                }
-                var products = snapshot.data!.docs;
-                return ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: products.length,
-                  itemBuilder: (context, index) {
-                    var product = products[index];
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Brand(
-                                      brands: product['brands'],
-                                      filters: filters,
-                                    )));
-                      },
-                      child: Container(
-                        width: 130,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Image.network(product['image_logo']),
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-
-          SizedBox(height: 15),
-
-          // ✅ Club List
-          SizedBox(
-            height: 100,
-            child: StreamBuilder(
-              stream: getCategories.snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return Center(child: Text('เกิดข้อผิดพลาด'));
-                }
-                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return Center(child: Text('ไม่มีข้อมูล'));
-                }
-                var products = snapshot.data!.docs;
-                return ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: products.length,
-                  itemBuilder: (context, index) {
-                    var product = products[index];
-                    return GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Typepage(
-                                      type: product['name'],
-                                      filter: filters[0],
-                                    )));
-                      },
-                      child: Stack(children: [
-                        Container(
-                          width: 130,
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Image.network(product['image_logo']),
-                          ),
-                        ),
-                        Positioned(
-                          top: 75,
-                          left: 40,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(1), // สีเงา
-                                  blurRadius: 5, // ระยะเบลอของเงา
-                                  offset: Offset(2, 2), // ระยะห่างของเงา (x, y)
-                                ),
-                              ],
-                            ),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Text(
-                                product['name'],
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ]),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-          // GridView.builder(
-          //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          //         crossAxisCount: 2),
-          //     itemBuilder: (context, index) {
-          //       return Card(
-          //         child: ,
-          //       )
-          //     })
-        ],
-      ),
-    );
+        );
   }
 }
 
@@ -425,150 +379,3 @@ class _OrderState extends State<Order> {
   }
 }
 
-class Profile extends StatefulWidget {
-  @override
-  _ProfileState createState() => _ProfileState();
-}
-
-class _ProfileState extends State<Profile> {
-  DocumentReference userRef = FirebaseFirestore.instance
-      .collection('users')
-      .doc('mYu70LVUSACs3Ec0JeQa');
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      child: StreamBuilder<DocumentSnapshot>(
-        stream: userRef.snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (!snapshot.hasData || !snapshot.data!.exists) {
-            return const Center(child: Text('User not found'));
-          }
-
-          var user = snapshot.data!.data() as Map<String, dynamic>;
-
-          return ListView(
-            children: [
-              // Text('Profile', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-              ListTile(
-                title: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Name: ',
-                        style: const TextStyle(
-                            fontWeight:
-                                FontWeight.bold), // ทำให้ "Name: " เป็นตัวหนา
-                      ),
-                      TextSpan(
-                        text: user['userName'] ??
-                            'No Name', // ข้อมูลที่มาจาก Firebase
-                      ),
-                    ],
-                  ),
-                ),
-                trailing: IconButton(
-                  icon: const Icon(
-                    Icons.edit_rounded,
-                    size: 17,
-                    color: Colors.black,
-                  ),
-                  onPressed: () =>
-                      _showEditDialog(context, 'userName', user['userName']),
-                ),
-              ),
-              ListTile(
-                title: Text.rich(TextSpan(children: [
-                  TextSpan(
-                    text: 'Phone: ',
-                    style: const TextStyle(
-                        fontWeight:
-                            FontWeight.bold), // ทำให้ "Name: " เป็นตัวหนา
-                  ),
-                  TextSpan(text: user['phone'] ?? 'No Name')
-                ])),
-                trailing: IconButton(
-                  icon: const Icon(
-                    Icons.edit,
-                    size: 17,
-                    color: Colors.black,
-                  ),
-                  onPressed: () =>
-                      _showEditDialog(context, 'phone', user['phone']),
-                ),
-              ),
-              ListTile(
-                title: Text.rich(TextSpan(children: [
-                  TextSpan(
-                    text: 'Address: ',
-                    style: const TextStyle(
-                        fontWeight:
-                            FontWeight.bold), // ทำให้ "Name: " เป็นตัวหนา
-                  ),
-                  TextSpan(text: user['address'] ?? 'No address')
-                ])),
-                trailing: IconButton(
-                  icon: const Icon(
-                    Icons.edit,
-                    size: 17,
-                    color: Colors.black,
-                  ),
-                  onPressed: () =>
-                      _showEditDialog(context, 'address', user['address']),
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  void _showEditDialog(
-      BuildContext context, String field, String? currentValue) {
-    TextEditingController controller =
-        TextEditingController(text: currentValue);
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          title: Text('Edit $field'),
-          content: TextField(
-            controller: controller,
-            decoration: InputDecoration(
-              labelText: 'Enter new $field',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text(
-                'Cancel',
-                style: TextStyle(color: Colors.black),
-              ),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
-              onPressed: () async {
-                await userRef.update({field: controller.text});
-                Navigator.of(context).pop(); // ปิด Modal
-              },
-              child: const Text(
-                'Save',
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
