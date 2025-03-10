@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_application_1/authPage.dart';
+import 'package:flutter_application_1/orderDetail.dart';
 
 class OrderPage extends StatefulWidget {
   const OrderPage({super.key});
@@ -48,13 +49,18 @@ class _OrderPageState extends State<OrderPage> {
                           children: [ 
                             Row(
                               children: [
-                                Container(
-                                  padding: EdgeInsets.only(left: 20),
-                                  width: 120,
-                                  height: 120,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(image: NetworkImage(eachOrderDocument['image_arr'][0]))
-                                  ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => OrderDetail(orderId: eachOrderDocument.id)));
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.only(left: 20),
+                                    width: 120,
+                                    height: 120,
+                                    decoration: BoxDecoration(
+                                      image: DecorationImage(image: NetworkImage(eachOrderDocument['image_arr'][0]))
+                                    ),
+                                ),
                                 ),
                                 Container(
                                   padding: EdgeInsets.only(left: 15),
