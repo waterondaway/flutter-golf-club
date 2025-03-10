@@ -3,9 +3,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_application_1/brand.dart';
 import 'package:flutter_application_1/cartshopscreen.dart';
+import 'package:flutter_application_1/orderDetail.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'firebase_options.dart';
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +26,11 @@ class _MyAppState extends State<MyApp> {
   int indexScreen = 0;
   final mobileScreen = [Home(), Order(), Profile()];
   List<String> header = ["Golf Club Elite", "Your Order", "Profile"];
-  List<String> subheader = ["Your Golf Journey Starts Here", "Track Your Purchases Easily", "Stay on Top of Your Game"];
+  List<String> subheader = [
+    "Your Golf Journey Starts Here",
+    "Track Your Purchases Easily",
+    "Stay on Top of Your Game"
+  ];
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -37,15 +41,19 @@ class _MyAppState extends State<MyApp> {
           title: Row(
             children: [
               Image.asset('assets/images/golf.png', width: 40, height: 40),
-              Padding(padding: EdgeInsets.only(left: 20), child: 
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(header[indexScreen], style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 20)),
-                  Text(subheader[indexScreen], style: TextStyle(color: Colors.black, fontSize: 18))
-                ]
-              )
-            )
+              Padding(
+                  padding: EdgeInsets.only(left: 20),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(header[indexScreen],
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20)),
+                        Text(subheader[indexScreen],
+                            style: TextStyle(color: Colors.black, fontSize: 18))
+                      ]))
             ],
           ),
           // leading: Icon(Icons.sports_golf, color: Colors.black),
@@ -60,7 +68,8 @@ class _MyAppState extends State<MyApp> {
                     indexScreen = 2;
                   });
                 },
-                child: Icon(Icons.account_circle, color: Colors.black, size: 40),
+                child:
+                    Icon(Icons.account_circle, color: Colors.black, size: 40),
               ),
             )
           ],
@@ -95,22 +104,19 @@ class _MyAppState extends State<MyApp> {
           selectedItemColor: Colors.black,
           unselectedItemColor: Colors.black87,
         ),
-        floatingActionButton: Builder(
-          builder: (context) {
-            return FloatingActionButton(
+        floatingActionButton: Builder(builder: (context) {
+          return FloatingActionButton(
               onPressed: () {
-                 Navigator.push(
-                  context, 
-                  MaterialPageRoute(
-                    builder: (context) => Cartshopscreen()),
-                    );
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Orderdetail()),
+                );
               },
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(100)),
               backgroundColor: Colors.black,
-              child: Icon(Icons.shopping_bag, color: Colors.white)
-            );
-          }
-        ),
+              child: Icon(Icons.shopping_bag, color: Colors.white));
+        }),
       ),
     );
   }
@@ -330,10 +336,9 @@ class _HomeState extends State<Home> {
                               child: Text(
                                 product['name'],
                                 style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white
-                                ),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
                               ),
                             ),
                           ),
@@ -367,62 +372,161 @@ class Order extends StatefulWidget {
 }
 
 class _OrderState extends State<Order> {
+  // สมมติว่าเรามี List ข้อมูลจาก Database
+  final List<Map<String, String>> cardData = [
+    {
+      'image': 'assets/images/download (1).jpg',
+      'title': "⭐ ไม้กอล์ฟยกชุด",
+      'price': "฿00",
+      'summary': "สินค้ารวม 1 รายการ : ฿00"
+    },
+    {
+      'image': 'assets/images/download (1).jpg',
+      'title': "⭐ ไม้กอล์ฟยกชุด ",
+      'price': "฿00",
+      'summary': "สินค้ารวม 1 รายการ : ฿650"
+    },
+    // เพิ่มข้อมูลได้อีกตามต้องการ
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
+      // ใช้ ListView.builder เพื่อสร้าง Card ตามข้อมูลใน list
+      child: ListView.builder(
+        itemCount: cardData.length,
+        itemBuilder: (context, index) {
+          final data = cardData[index];
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 20),
+            child: buildCard(data),
+          );
+        },
+      ),
+    );
+  }
 
-          Container(
-            height: 170,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3), // สีของเงา
-                  spreadRadius: 1, // ระยะการกระจายของเงา
-                  blurRadius: 3, // ความเบลอของเงา
-                  offset: const Offset(0, 0), // ตำแหน่งเงา
-                ),
-              ]
-            ),
-            
+  // สร้างฟังก์ชันสำหรับ Card โดยรับข้อมูลมาเป็น Map
+  Widget buildCard(Map<String, String> data) {
+    return Container(
+      height: 230,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3), // สีของเงา
+            spreadRadius: 1, // ระยะการกระจายของเงา
+            blurRadius: 3, // ความเบลอของเงา
+            offset: const Offset(0, 0), // ตำแหน่งเงา
           ),
-
-          SizedBox(height: 20),
-
-          Container(
-            height: 170,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3), // สีของเงา
-                  spreadRadius: 1, // ระยะการกระจายของเงา
-                  blurRadius: 3, // ความเบลอของเงา
-                  offset: const Offset(0, 0), // ตำแหน่งเงา
-                ),
-              ]
-            ),
-            
-          ),
-
-
-          
-          // ClipRRect(
-          //       borderRadius:
-          //           BorderRadius.circular(10), // กำหนดขนาดของโค้งมุมที่ต้องการ
-          //       child: Image.network(
-          //         'https://plus.unsplash.com/premium_photo-1679710943658-1565004c00ac?q=80&w=3544&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-          //         fit: BoxFit.cover,
-          //       ),
-          //     ),
         ],
-      )
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // รูปภาพ
+          Padding(
+            padding: const EdgeInsets.only(left: 20),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                data['image']!,
+                width: 130,
+                height: 130,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          const SizedBox(width: 20),
+          // ข้อมูลสินค้า
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // ชื่อสินค้า
+                Padding(
+                  padding: const EdgeInsets.only(top: 55),
+                  child: Text(
+                    data['title']!,
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                // ราคา
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20, right: 20),
+                      child: Text(
+                        data['price']!,
+                        style: const TextStyle(fontSize: 16),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                // สรุปราคา
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10, right: 20),
+                      child: Text(
+                        data['summary']!,
+                        style: const TextStyle(fontSize: 16),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 1),
+                // ปุ่มรับแล้ว
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        print('รับแล้ว pressed!');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      child: Container(
+                        width: 100,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.green),
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.green,
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'รับแล้ว',
+                            style: TextStyle(fontSize: 14, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Padding(padding: EdgeInsets.only(right: 20))
+                  ],
+                )
+              ],
+            ),
+          )
+        ],
+      ),
     );
   }
 }
@@ -438,10 +542,9 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-      child: Column(
-        children: [],
-      )
-    );
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        child: Column(
+          children: [],
+        ));
   }
 }
