@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_golf_club_latest/brandPage.dart';
-import 'package:flutter_golf_club_latest/typePage.dart';
+import 'package:flutter_application_1/brandPage.dart';
+import 'package:flutter_application_1/typePage.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 
 class HomePage extends StatefulWidget {

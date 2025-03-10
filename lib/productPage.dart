@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/cartPage.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:readmore/readmore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,10 +29,17 @@ class _ProductPageState extends State<ProductPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.network('https://uxwing.com/wp-content/themes/uxwing/download/checkmark-cross/done-icon.png', width: 60, height: 60),
+                  Image.network(
+                      'https://uxwing.com/wp-content/themes/uxwing/download/checkmark-cross/done-icon.png',
+                      width: 60,
+                      height: 60),
                   SizedBox(height: 10),
-                  Text('The process is complete', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text('Items through the cart.', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500))
+                  Text('The process is complete',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text('Items through the cart.',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500))
                 ],
               ),
             ),
@@ -71,6 +79,15 @@ class _ProductPageState extends State<ProductPage> {
               )
             ],
           )),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => CartPage()));
+        },
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+        backgroundColor: Colors.black,
+        child: Icon(Icons.shopping_bag, color: Colors.white, size: 30),
+      ),
       body: StreamBuilder(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot_auth) {
@@ -220,16 +237,42 @@ class _ProductPageState extends State<ProductPage> {
                                             if (snapshot_auth.hasData) {
                                               final user = FirebaseAuth
                                                   .instance.currentUser;
-                                              await FirebaseFirestore.instance
-                                                  .collection('users')
-                                                  .doc(user!.uid)
-                                                  .collection('carts')
-                                                  .add({
-                                                'productId': productsDocument[
-                                                    'productId'],
-                                                'quantity': 1,
-                                              });
-                                              showAddDialog(context);
+                                              if (user != null) {
+                                                // Reference to the user's cart collection in Firestore
+                                                var cartRef = FirebaseFirestore
+                                                    .instance
+                                                    .collection('users')
+                                                    .doc(user.uid)
+                                                    .collection('carts')
+                                                    .doc(widget
+                                                        .productId); // Using productId as the document ID
+
+                                                // Check if the product already exists in the cart
+                                                var cartSnapshot =
+                                                    await cartRef.get();
+
+                                                if (cartSnapshot.exists) {
+                                                  // Product is already in the cart, update the quantity
+                                                  int currentQty =
+                                                      cartSnapshot['quantity'] ?? 0;
+                                                  int currentPrice =
+                                                      cartSnapshot['total'] ?? 0;
+                                                  await cartRef.update({
+                                                    'quantity': currentQty + 1,
+                                                    'total': currentPrice + productsDocument['price']
+                                                  });
+                                                } else {
+                                                  // Product is not in the cart, add it
+                                                  await cartRef.set({
+                                                    'productId':
+                                                        widget.productId,
+                                                    'quantity': 1,
+                                                    'total': productsDocument['price']
+                                                  });
+                                                }
+
+                                                showAddDialog(context);
+                                              }
                                             } else {
                                               return;
                                             }
