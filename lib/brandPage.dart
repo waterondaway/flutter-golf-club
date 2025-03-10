@@ -3,15 +3,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_application_1/productPage.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 
-class TypePage extends StatefulWidget {
-  final String type;
-  const TypePage({super.key, required this.type});
+class BrandPage extends StatefulWidget {
+  final String brand;
+  const BrandPage({super.key, required this.brand});
 
   @override
-  State<TypePage> createState() => _TypePageState();
+  State<BrandPage> createState() => _BrandPageState();
 }
 
-class _TypePageState extends State<TypePage> {
+class _BrandPageState extends State<BrandPage> {
   CollectionReference productsCollection = FirebaseFirestore.instance.collection('product');
   String filter = 'All';
   
@@ -27,7 +27,7 @@ class _TypePageState extends State<TypePage> {
             Column(
 								crossAxisAlignment: CrossAxisAlignment.start,
 								children: [
-									Text('Categories: ${widget.type}', style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold)),
+									Text('Club: ${widget.brand}', style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold)),
 									Text('Find the Perfect Driver for Your Game', style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.w600))
 								],
 						),
@@ -101,7 +101,7 @@ class _TypePageState extends State<TypePage> {
             ),
             SizedBox(height: 15),
             StreamBuilder(
-              stream: filter == 'All' ? productsCollection.where('type', isEqualTo: widget.type).snapshots() : productsCollection.where('type', isEqualTo: widget.type.toLowerCase()).where('gender', isEqualTo: filter.toLowerCase()).snapshots(),
+              stream: filter == 'All' ? productsCollection.where('productBrand', isEqualTo: widget.brand).snapshots() : productsCollection.where('productBrand', isEqualTo: widget.brand.toLowerCase()).where('gender', isEqualTo: filter.toLowerCase()).snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -116,7 +116,7 @@ class _TypePageState extends State<TypePage> {
                         var eachProductsDocuments = productsDocument[index];
                         return GestureDetector(
                           onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => ProductPage(productId: eachProductsDocuments.id, productName: eachProductsDocuments['productName'])));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => ProductPage(productId: eachProductsDocuments.id, productName: eachProductsDocuments['productName'],)));
                           },
                           child: Card(
                             color: Colors.white,
