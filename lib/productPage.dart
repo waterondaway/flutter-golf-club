@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/cartPage.dart';
 import 'package:flutter_image_slideshow/flutter_image_slideshow.dart';
 import 'package:readmore/readmore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,8 +8,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 class ProductPage extends StatefulWidget {
   final String productId;
   final String productName;
+  final String filter;
   const ProductPage(
-      {super.key, required this.productId, required this.productName});
+      {super.key, required this.productId, required this.productName, required this.filter});
 
   @override
   State<ProductPage> createState() => _ProductPageState();
@@ -28,10 +30,17 @@ class _ProductPageState extends State<ProductPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.network('https://uxwing.com/wp-content/themes/uxwing/download/checkmark-cross/done-icon.png', width: 60, height: 60),
+                  Image.network(
+                      'https://uxwing.com/wp-content/themes/uxwing/download/checkmark-cross/done-icon.png',
+                      width: 60,
+                      height: 60),
                   SizedBox(height: 10),
-                  Text('The process is complete', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text('Items through the cart.', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500))
+                  Text('The process is complete',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text('Items through the cart.',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500))
                 ],
               ),
             ),
@@ -71,6 +80,15 @@ class _ProductPageState extends State<ProductPage> {
               )
             ],
           )),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => CartPage()));
+        },
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(100)),
+        backgroundColor: Colors.black,
+        child: Icon(Icons.shopping_bag, color: Colors.white, size: 30),
+      ),
       body: StreamBuilder(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (context, snapshot_auth) {
@@ -92,36 +110,28 @@ class _ProductPageState extends State<ProductPage> {
                                 vertical: 20, horizontal: 10),
                             child: Column(
                               children: [
-                                ImageSlideshow(children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(10),
-                                        topRight: Radius.circular(10)),
-                                    child: Image.network(
-                                        productsDocument!['image_path'][0],
-                                        fit: BoxFit.contain),
-                                  ),
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(10),
-                                        topRight: Radius.circular(10)),
-                                    child: Image.network(
-                                        productsDocument['image_path'][1],
-                                        fit: BoxFit.contain),
-                                  ),
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(10),
-                                        topRight: Radius.circular(10)),
-                                    child: Image.network(
-                                        productsDocument['image_path'][2],
-                                        fit: BoxFit.contain),
-                                  )
-                                ]),
+
+                                  ImageSlideshow(
+                                  children: [
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                                      child: Image.network(productsDocument!['image_path'][0], fit: BoxFit.contain),
+                                    ),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                                      child: Image.network(productsDocument!['image_path'][1], fit: BoxFit.contain),
+                                    ),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                                      child: Image.network(productsDocument!['image_path'][2], fit: BoxFit.contain),
+                                    ),
+                                  ]
+                                ),
+
                                 SizedBox(height: 15),
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 5),
+                                      horizontal: 10, vertical: 5),
                                   child: Text(productsDocument['productName'],
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
@@ -228,16 +238,43 @@ class _ProductPageState extends State<ProductPage> {
                                             if (snapshot_auth.hasData) {
                                               final user = FirebaseAuth
                                                   .instance.currentUser;
-                                              await FirebaseFirestore.instance
-                                                  .collection('users')
-                                                  .doc(user!.uid)
-                                                  .collection('carts')
-                                                  .add({
-                                                'productId': productsDocument[
-                                                    'productId'],
-                                                'quantity': 1,
-                                              });
-                                              showAddDialog(context);
+                                              if (user != null) {
+                                                // Reference to the user's cart collection in Firestore
+                                                var cartRef = FirebaseFirestore
+                                                    .instance
+                                                    .collection('users')
+                                                    .doc(user.uid)
+                                                    .collection('carts')
+                                                    .doc(widget
+                                                        .productId); // Using productId as the document ID
+
+                                                // Check if the product already exists in the cart
+                                                var cartSnapshot =
+                                                    await cartRef.get();
+
+                                                if (cartSnapshot.exists) {
+                                                  print('Yes');
+                                                  // Product is already in the cart, update the quantity
+                                                  int currentQty = cartSnapshot['quantity'];
+                                                  int currentPrice =
+                                                      cartSnapshot['total'];
+                                                  await cartRef.update({
+                                                    'quantity': currentQty + 1,
+                                                    'total': currentPrice + productsDocument['price']
+                                                  });
+                                                } else {
+                                                  print('No');
+                                                  // Product is not in the cart, add it
+                                                  await cartRef.set({
+                                                    'productId':
+                                                        widget.productId,
+                                                    'quantity': 1,
+                                                    'total': productsDocument['price']
+                                                  });
+                                                }
+
+                                                showAddDialog(context);
+                                              }
                                             } else {
                                               return;
                                             }
@@ -275,9 +312,6 @@ class _ProductPageState extends State<ProductPage> {
                                         .collection('product')
                                         .where('productId',
                                             isNotEqualTo: productsDocument.id)
-                                        .where('gender',
-                                            isEqualTo:
-                                                productsDocument['gender'])
                                         .snapshots(),
                                     builder: (context, snapshot) {
                                       if (snapshot.connectionState ==
@@ -289,7 +323,7 @@ class _ProductPageState extends State<ProductPage> {
                                         var productsDocument =
                                             snapshot.data!.docs;
                                         return SizedBox(
-                                            height: 320,
+                                            height: 330,
                                             child: ListView.builder(
                                                 scrollDirection:
                                                     Axis.horizontal,
@@ -310,7 +344,7 @@ class _ProductPageState extends State<ProductPage> {
                                                                           .id,
                                                                   productName:
                                                                       eachProductsDocuments[
-                                                                          'productName'])));
+                                                                          'productName'], filter: widget.filter)));
                                                     },
                                                     child: Card(
                                                         color: Colors.white,
@@ -322,6 +356,22 @@ class _ProductPageState extends State<ProductPage> {
                                                                 CrossAxisAlignment
                                                                     .start,
                                                             children: [
+                                                              ImageSlideshow(
+                                                                children: [
+                                                                  ClipRRect(
+                                                                borderRadius: BorderRadius.only(
+                                                                    topLeft: Radius
+                                                                        .circular(
+                                                                            10),
+                                                                    topRight: Radius
+                                                                        .circular(
+                                                                            10)),
+                                                                child: Image.network(
+                                                                    eachProductsDocuments[
+                                                                        'image_path'][0],
+                                                                    fit: BoxFit.contain
+                                                                        ),
+                                                              ),
                                                               ClipRRect(
                                                                 borderRadius: BorderRadius.only(
                                                                     topLeft: Radius
@@ -332,10 +382,13 @@ class _ProductPageState extends State<ProductPage> {
                                                                             10)),
                                                                 child: Image.network(
                                                                     eachProductsDocuments[
-                                                                        'image_path'],
-                                                                    fit: BoxFit
-                                                                        .contain),
+                                                                        'image_path'][1],
+                                                                    fit: BoxFit.contain
+                                                                        ),
                                                               ),
+                                                                ]
+                                                              ),
+                                                              
                                                               SizedBox(
                                                                   height: 10),
                                                               Padding(

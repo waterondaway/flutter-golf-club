@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:flutter_application_1/checkoutPage.dart'; // อย่าลืมตรวจสอบ path ของ checkoutPage.dart
 
 class CartPage extends StatefulWidget {
   CartPage({super.key});
@@ -131,6 +132,7 @@ class _CartPageState extends State<CartPage> {
 
                               return Column(
                                 children: [
+                                  SizedBox(height: 10),
                                   Expanded(
                                     child: ListView.builder(
                                       itemCount: cartsDocument.length,
@@ -146,7 +148,7 @@ class _CartPageState extends State<CartPage> {
 
                                         return ListTile(
                                           leading: Image.network(
-                                            cartsDocumentIndex["image_path"],
+                                            cartsDocumentIndex["image_path"][0],
                                             width: 100,
                                             height: 100,
                                             fit: BoxFit.contain,
@@ -161,7 +163,7 @@ class _CartPageState extends State<CartPage> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                  "ราคา: £$price | จำนวน: $quantity"),
+                                                  "Price: £$price | Amount: $quantity"),
                                               SizedBox(height: 10),
                                               Row(
                                                 mainAxisAlignment:
@@ -180,7 +182,7 @@ class _CartPageState extends State<CartPage> {
                                                     ),
                                                     child: Center(
                                                       child: Text(
-                                                        "total: £${(price * quantity).toStringAsFixed(2)}",
+                                                        "Total: £${(price * quantity).toStringAsFixed(2)}",
                                                       ),
                                                     ),
                                                   ),
@@ -218,12 +220,12 @@ class _CartPageState extends State<CartPage> {
                                       },
                                     ),
                                   ),
-                                  // แสดงราคารวมทั้งหมด
+                
                                   Padding(
-                                    padding: const EdgeInsets.all(16.0),
+                                    padding: const EdgeInsets.all(18.0),
                                     child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceAround,
                                       children: [
                                         Text(
                                           "Total: ฿${totalSum.toStringAsFixed(2)}",
@@ -249,6 +251,7 @@ class _CartPageState extends State<CartPage> {
                                       ],
                                     ),
                                   ),
+                                  SizedBox(height: 20)
                                 ],
                               );
                             }

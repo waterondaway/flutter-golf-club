@@ -101,7 +101,7 @@ class _BrandPageState extends State<BrandPage> {
             ),
             SizedBox(height: 15),
             StreamBuilder(
-              stream: filter == 'All' ? productsCollection.where('productBrand', isEqualTo: widget.brand).snapshots() : productsCollection.where('productBrand', isEqualTo: widget.brand.toLowerCase()).where('gender', isEqualTo: filter.toLowerCase()).snapshots(),
+              stream: filter == 'All' ? productsCollection.where('productBrand', isEqualTo: widget.brand).snapshots() : productsCollection.where('productBrand', isEqualTo: widget.brand).where('gender', isEqualTo: filter.toLowerCase()).snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -116,7 +116,7 @@ class _BrandPageState extends State<BrandPage> {
                         var eachProductsDocuments = productsDocument[index];
                         return GestureDetector(
                           onTap: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => ProductPage(productId: eachProductsDocuments.id, productName: eachProductsDocuments['productName'],)));
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => ProductPage(productId: eachProductsDocuments.id, productName: eachProductsDocuments['productName'], filter: filter.toLowerCase())));
                           },
                           child: Card(
                             color: Colors.white,
