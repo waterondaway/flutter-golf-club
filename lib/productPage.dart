@@ -98,7 +98,7 @@ class _ProductPageState extends State<ProductPage> {
                                         topLeft: Radius.circular(10),
                                         topRight: Radius.circular(10)),
                                     child: Image.network(
-                                        productsDocument!['image_path'],
+                                        productsDocument!['image_path'][0],
                                         fit: BoxFit.contain),
                                   ),
                                   ClipRRect(
@@ -106,14 +106,22 @@ class _ProductPageState extends State<ProductPage> {
                                         topLeft: Radius.circular(10),
                                         topRight: Radius.circular(10)),
                                     child: Image.network(
-                                        productsDocument['image_path'],
+                                        productsDocument['image_path'][1],
+                                        fit: BoxFit.contain),
+                                  ),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(10),
+                                        topRight: Radius.circular(10)),
+                                    child: Image.network(
+                                        productsDocument['image_path'][2],
                                         fit: BoxFit.contain),
                                   )
                                 ]),
                                 SizedBox(height: 15),
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 5),
+                                      horizontal: 8, vertical: 5),
                                   child: Text(productsDocument['productName'],
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,

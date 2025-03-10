@@ -129,12 +129,16 @@ class _TypePageState extends State<TypePage> {
                                   children: [
                                     ClipRRect(
                                       borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-                                      child: Image.network(eachProductsDocuments['image_path'], fit: BoxFit.cover),
+                                      child: Image.network(eachProductsDocuments['image_path'][0], fit: BoxFit.contain),
                                     ),
                                     ClipRRect(
                                       borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
-                                      child: Image.network(eachProductsDocuments['image_path'], fit: BoxFit.cover),
-                                    )
+                                      child: Image.network(eachProductsDocuments['image_path'][1], fit: BoxFit.contain),
+                                    ),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10)),
+                                      child: Image.network(eachProductsDocuments['image_path'][2], fit: BoxFit.contain),
+                                    ),
                                   ]
                                 ),
                                 SizedBox(height: 10),
