@@ -73,7 +73,7 @@ class _OrderDetailState extends State<OrderDetail> {
                                               image: DecorationImage(
                                                 image: NetworkImage(
                                                     productDocument[
-                                                        'image_path']),
+                                                        'image_path'][0]),
                                               ),
                                             ),
                                           ),

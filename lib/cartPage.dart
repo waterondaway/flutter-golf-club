@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_application_1/main.dart';
+import 'package:flutter_application_1/orderPage.dart';
 // import 'package:flutter_application_1/checkoutPage.dart'; // อย่าลืมตรวจสอบ path ของ checkoutPage.dart
 
 class CartPage extends StatefulWidget {
@@ -58,7 +60,8 @@ class _CartPageState extends State<CartPage> {
 
                 if (snapshot_auth.hasData) {
                   final currentUser = FirebaseAuth.instance.currentUser;
-                  CollectionReference usersCollection = FirebaseFirestore.instance
+                  CollectionReference usersCollection = FirebaseFirestore
+                      .instance
                       .collection('users')
                       .doc(currentUser!.uid)
                       .collection('carts');
@@ -85,7 +88,8 @@ class _CartPageState extends State<CartPage> {
                         return StreamBuilder(
                           stream: productIds.isNotEmpty
                               ? productRef
-                                  .where(FieldPath.documentId, whereIn: productIds)
+                                  .where(FieldPath.documentId,
+                                      whereIn: productIds)
                                   .snapshots()
                               : Stream.empty(),
                           builder: (context, snapshot_cart) {
@@ -121,14 +125,14 @@ class _CartPageState extends State<CartPage> {
                               }
 
                               // คำนวณราคารวมของสินค้าทั้งหมด
-                              double totalSum = cartsDocument.fold(0, (sum, doc) {
+                              double totalSum =
+                                  cartsDocument.fold(0, (sum, doc) {
                                 String productId = doc.id;
-                                int quantity = productQuantities[productId] ?? 0;
+                                int quantity =
+                                    productQuantities[productId] ?? 0;
                                 double price = (doc['price'] as num).toDouble();
                                 return sum + (price * quantity);
-                                
-                              }
-                              );
+                              });
 
                               return Column(
                                 children: [
@@ -139,7 +143,9 @@ class _CartPageState extends State<CartPage> {
                                       itemBuilder: (context, index) {
                                         var cartsDocumentIndex =
                                             cartsDocument[index];
-                                        String productId = cartsDocumentIndex.id;
+                                        print(cartsDocumentIndex);
+                                        String productId =
+                                            cartsDocumentIndex.id;
                                         int quantity =
                                             productQuantities[productId] ?? 0;
                                         double price =
@@ -195,16 +201,15 @@ class _CartPageState extends State<CartPage> {
                                                                 .instance
                                                                 .collection(
                                                                     'users')
-                                                                .doc(currentUser!
-                                                                    .uid)
+                                                                .doc(
+                                                                    currentUser!
+                                                                        .uid)
                                                                 .collection(
                                                                     'carts');
                                                         userDelete
                                                             .doc(productId)
                                                             .delete();
-                                                            setState(() {
-                                                              
-                                                            });
+                                                        setState(() {});
                                                       },
                                                       child: Icon(
                                                         Icons.delete,
@@ -220,7 +225,6 @@ class _CartPageState extends State<CartPage> {
                                       },
                                     ),
                                   ),
-                
                                   Padding(
                                     padding: const EdgeInsets.all(18.0),
                                     child: Row(
@@ -234,13 +238,73 @@ class _CartPageState extends State<CartPage> {
                                               fontWeight: FontWeight.bold),
                                         ),
                                         ElevatedButton(
-                                          onPressed: () {
-                                            // Navigator.push(
-                                            //   context,
-                                            //   MaterialPageRoute(
-                                            //       builder: (context) =>
-                                            //           Checkoutscreen()),
-                                            // );
+                                          onPressed: () async {
+                                            CollectionReference orderAdd =
+                                                FirebaseFirestore.instance
+                                                    .collection('users')
+                                                    .doc(currentUser!.uid)
+                                                    .collection('orders');
+
+                                            CollectionReference cartRef =
+                                                FirebaseFirestore.instance
+                                                    .collection('users')
+                                                    .doc(currentUser!.uid)
+                                                    .collection('carts');
+
+                                            CollectionReference productRef =
+                                                FirebaseFirestore.instance
+                                                    .collection('product');
+
+                                            // ดึงข้อมูลจาก carts
+                                            QuerySnapshot cartSnapshot =
+                                                await cartRef.get();
+
+                                            // ดึง productId_arr จาก doc.id ของ carts
+                                            List<String> productIdArr =
+                                                cartSnapshot.docs
+                                                    .map((doc) => doc.id)
+                                                    .toList();
+
+                                            List<String> imagePaths = [];
+
+                                            // ดึงข้อมูล image_path ของแต่ละ product ที่มีใน cart
+                                            for (var productId
+                                                in productIdArr) {
+                                              DocumentSnapshot productDoc =
+                                                  await productRef
+                                                      .doc(productId)
+                                                      .get();
+
+                                              // ตรวจสอบว่ามีข้อมูล image_path และดึงเฉพาะ index 0
+                                              if (productDoc.exists &&
+                                                  productDoc.data() != null) {
+                                                var productData =
+                                                    productDoc.data()
+                                                        as Map<String, dynamic>;
+                                                var imagePath =
+                                                    productData['image_path'];
+                                                if (imagePath != null &&
+                                                    imagePath.isNotEmpty) {
+                                                  imagePaths.add(imagePath[
+                                                      0]); // เพิ่ม image_path ที่ index 0
+                                                }
+                                              }
+                                            }
+
+                                            // เพิ่มข้อมูลไปที่ orders
+                                            await orderAdd.add({   
+                                              'order_date':DateTime.now().toString().substring(0, 10),                                           
+                                              'productId_arr': productIdArr,
+                                              'image_arr':
+                                                  imagePaths, // เพิ่ม image_paths ไปใน order,
+                                              'total':totalSum
+                                            });
+                                            Navigator.pop(context);
+                                            // ลบข้อมูลจาก cart
+                                            for (var doc in productIdArr) {
+                                              await cartRef.doc(doc).delete();
+                                              print(doc);
+                                            }
                                           },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: Colors.black,
