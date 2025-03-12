@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_application_1/main.dart';
 import 'package:flutter_application_1/orderPage.dart';
-// import 'package:flutter_application_1/checkoutPage.dart'; // อย่าลืมตรวจสอบ path ของ checkoutPage.dart
 
 class CartPage extends StatefulWidget {
   CartPage({super.key});

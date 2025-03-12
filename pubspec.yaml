@@ -41,6 +41,7 @@ dependencies:
   flutter_image_slideshow: ^0.1.6
   readmore: ^3.0.0
   flutter_launcher_icons: ^0.14.3
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
@@ -93,3 +94,8 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+flutter_icons:
+  android: true 
+  ios: true
+  image_path: "assets/images/logo.png"

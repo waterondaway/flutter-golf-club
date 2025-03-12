@@ -78,23 +78,24 @@ class _OrderDetailState extends State<OrderDetail> {
                                             ),
                                           ),
                                         ),
-                                        SizedBox(width: 10),
+                                        // SizedBox(width: 10),
                                         Container(
                                           width: 220,
                                           height: 120,
                                           color: Colors.white,
                                           child: Column(
                                             mainAxisAlignment:
-                                                MainAxisAlignment.start,
+                                                MainAxisAlignment.center,
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
+                                              
                                               Text("Name : ${productDocument['productName']}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16), maxLines: 1, overflow: TextOverflow.ellipsis),
-                                              SizedBox(height: 8),
-                                              Text("Price : € ${productDocument['sold']}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                                              SizedBox(height: 8),
+                                              SizedBox(height: 4),
+                                              Text("Price : €${productDocument['sold']}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                              SizedBox(height: 4),
                                               Text("Gender: ${productDocument['gender']}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                                              SizedBox(height: 8),
+                                              SizedBox(height: 4),
                                               Text("Brand: ${productDocument['productBrand']}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                                             ],
                                           ),

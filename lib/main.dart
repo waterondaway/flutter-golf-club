@@ -5,6 +5,7 @@ import 'package:flutter_application_1/homePage.dart';
 import 'package:flutter_application_1/orderPage.dart';
 import 'package:flutter_application_1/profilePage.dart';
 import 'firebase_options.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
 	WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +15,9 @@ void main() async {
 	runApp(    
 		MaterialApp(
 			debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        textTheme: GoogleFonts.poppinsTextTheme(),
+      ),
 			home: MyApp(),
 		)
 	);

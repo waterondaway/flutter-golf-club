@@ -24,6 +24,10 @@ class _OrderPageState extends State<OrderPage> {
           return StreamBuilder(
             stream: ordersCollection.snapshots(), 
             builder: (context, snapshot) {
+              if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        }
               if (snapshot.hasData) {
                 var ordersDocument =  snapshot.data!.docs;
                 return ListView.builder(
