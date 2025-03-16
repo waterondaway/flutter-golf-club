@@ -31,6 +31,11 @@ class _AuthPageState extends State<AuthPage> {
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       print(e.message);
+      isError = true;
+      setState(() {
+        
+      });
+      
     }
     Navigator.pop(context);
   }
@@ -60,6 +65,10 @@ class _AuthPageState extends State<AuthPage> {
       Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       print(e.message);
+      isError = true;
+      setState(() {
+        
+      });
     }
     Navigator.pop(context);
   }
@@ -77,6 +86,7 @@ class _AuthPageState extends State<AuthPage> {
   final fullnameControl = TextEditingController();
   final addressControl = TextEditingController();
   int indexScreen = 0;
+  bool isError = false;
   List<String> header = ["Sign In to Continue", "Register to Join Us"];
   @override
   Widget build(BuildContext context) {
@@ -119,6 +129,7 @@ class _AuthPageState extends State<AuthPage> {
                     _isEmailValid = true;
                     _isPasswordValid = true;
                     indexScreen = 0;
+                    isError = false;
                   });
                 }, 
                 child: Text('Login', style: TextStyle(color: indexScreen == 0 ? Colors.white : Colors.black))
@@ -138,6 +149,7 @@ class _AuthPageState extends State<AuthPage> {
                     _isTelephoneValid = true;
                     _isAddressValid = true;
                     indexScreen = 1;
+                    isError = false;
                   });
                 }, 
                 child: Text('Register', style: TextStyle(color: indexScreen == 1 ? Colors.white : Colors.black))
@@ -198,6 +210,8 @@ class _AuthPageState extends State<AuthPage> {
                     ),
                   ),
                 ),
+                Text(isError ? "Something went Wrong. Please Trying Again!" : "", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                SizedBox(height: 10),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black
@@ -345,6 +359,8 @@ class _AuthPageState extends State<AuthPage> {
                     ),
                   ),
                 ),
+                Text(isError ? "Something went Wrong. Please Trying Again!" : "", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+                SizedBox(height: 10),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black

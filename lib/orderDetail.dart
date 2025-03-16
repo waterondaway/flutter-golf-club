@@ -25,6 +25,10 @@ class _OrderDetailState extends State<OrderDetail> {
         body: StreamBuilder(
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (context, snapshot_auth) {
+              if (snapshot_auth.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                    }
               final currentUser = FirebaseAuth.instance.currentUser;
               DocumentReference ordersDocument = FirebaseFirestore.instance
                   .collection('users')
@@ -34,11 +38,17 @@ class _OrderDetailState extends State<OrderDetail> {
               return StreamBuilder(
                   stream: ordersDocument.snapshots(),
                   builder: (context, snapshot) {
+                    if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                    }
+                    if (snapshot.hasData && snapshot.data != null){
                     var order = snapshot.data!;
                     return ListView.builder(
                       padding: EdgeInsets.only(top: 10),
                       itemCount: order['productId_arr'].length,
                       itemBuilder: (context, index) {
+                    
                         return Padding(
                           padding: EdgeInsets.symmetric(
                               horizontal: 20, vertical: 10),
@@ -60,6 +70,10 @@ class _OrderDetailState extends State<OrderDetail> {
                                       .doc(order['productId_arr'][index])
                                       .snapshots(),
                                   builder: (context, snapshot) {
+                                                  if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                    }
                                     var productDocument = snapshot.data!;
                                     return Row(
                                       children: [
@@ -106,6 +120,9 @@ class _OrderDetailState extends State<OrderDetail> {
                         );
                       },
                     );
+                    } else {
+                      return SizedBox();
+                    }
                   });
             }));
   }
